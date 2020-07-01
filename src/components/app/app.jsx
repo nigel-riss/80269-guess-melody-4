@@ -7,7 +7,7 @@ const handleWelcomeButtonClick = () => {};
 
 
 export const App = (props) => {
-  const {errorCount} = props;
+  const {errorCount, questions} = props;
 
   return <WelcomeScreen
     errorCount={errorCount}
@@ -18,4 +18,5 @@ export const App = (props) => {
 
 App.propTypes = {
   errorCount: PropTypes.number.isRequired,
+  questions: PropTypes.array.isRequired,
 };
