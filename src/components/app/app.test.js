@@ -2,9 +2,9 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import {App} from './app.jsx';
 
-const questions = {
+const questions = [
   // TODO: add questions mocks
-};
+];
 
 
 it(`App renders correctly`, () => {
