@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Render App correctly 1`] = `
+exports[`App renders correctly 1`] = `
 <section
   className="welcome"
 >
