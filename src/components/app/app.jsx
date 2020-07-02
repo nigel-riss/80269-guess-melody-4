@@ -45,13 +45,52 @@ class App extends PureComponent {
   }
 
   _renderGameScreen() {
-    return <WelcomeScreen
-      errorCount={13}
-      onWelcomeButtonClick={this._handleWelcomeButtonClick}
-    />;
+    const {errorCount, questions} = this.props;
+    const {step} = this.state;
+    const question = questions[step];
+
+    if (step === -1 || step >= questions.length) {
+      return <WelcomeScreen
+        errorCount={errorCount}
+        onWelcomeButtonClick={this._handleWelcomeButtonClick}
+      />;
+    }
+
+    if (question) {
+      switch (question.type) {
+        case GameType.ARTIST:
+          return (
+            <ArtistQuestionScreen
+              question={question}
+              onAnswer={() => {
+                this.setState((prevState) => ({
+                  step: prevState.step + 1,
+                }));
+              }}
+            />
+          );
+        case GameType.GENRE:
+          return (
+            <GenreQuestionScreen
+              question={question}
+              onAnswer={() => {
+                this.setState((prevState) => ({
+                  step: prevState.step + 1,
+                }));
+              }}
+            />
+          );
+      }
+    }
+
+    return null;
   }
 
-  _handleWelcomeButtonClick() {}
+  _handleWelcomeButtonClick() {
+    this.setState({
+      step: 0,
+    });
+  }
 }
 
 
