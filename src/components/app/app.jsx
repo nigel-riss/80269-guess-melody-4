@@ -1,22 +1,33 @@
+import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
-import {WelcomeScreen} from '../welcome-screen/welcome-screen.jsx';
+// import {Switch, Route, BrowserRouter} from 'react-router-dom';
+import WelcomeScreen from '../welcome-screen/welcome-screen.jsx';
 
 
-const handleWelcomeButtonClick = () => {};
+class App extends PureComponent {
+  constructor(props) {
+    super(props);
 
+    this._handleWelcomeButtonClick = this._handleWelcomeButtonClick.bind(this);
+  }
 
-export const App = (props) => {
-  const {errorCount} = props;
+  render() {
+    const {errorCount} = this.props;
 
-  return <WelcomeScreen
-    errorCount={errorCount}
-    onWelcomeButtonClick={handleWelcomeButtonClick}
-  />;
-};
+    return <WelcomeScreen
+      errorCount={errorCount}
+      onWelcomeButtonClick={this._handleWelcomeButtonClick}
+    />;
+  }
+
+  _handleWelcomeButtonClick() {}
+}
 
 
 App.propTypes = {
   errorCount: PropTypes.number.isRequired,
   questions: PropTypes.array.isRequired,
 };
+
+
+export default App;
