@@ -17,6 +17,7 @@ it(`AudioPlayer renders correctly`, () => {
     .create((
       <AudioPlayer
         isPlaying={false}
+        onPlayButtonClick={() => {}}
         src={song.src}
       />
     ), {
