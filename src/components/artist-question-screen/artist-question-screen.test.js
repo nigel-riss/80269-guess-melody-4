@@ -27,7 +27,7 @@ it(`ArtistQuestionScreen renders correctly`, () => {
       <ArtistQuestionScreen
         question={question}
         onAnswer={() => {}}
-        renderPlayer={() = {}}
+        renderPlayer={() => {}}
       />
     ), {
       createNodeMock: () => {
