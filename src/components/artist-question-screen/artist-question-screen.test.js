@@ -22,12 +22,19 @@ const question = {
 };
 
 it(`ArtistQuestionScreen renders correctly`, () => {
-  const tree = renderer.create((
-    <ArtistQuestionScreen
-      question={question}
-      onAnswer={() => {}}
-    />
-  )).toJSON();
+  const tree = renderer
+    .create((
+      <ArtistQuestionScreen
+        question={question}
+        onAnswer={() => {}}
+        renderPlayer={() => {}}
+      />
+    ), {
+      createNodeMock: () => {
+        return {};
+      }
+    })
+    .toJSON();
 
   expect(tree).toMatchSnapshot();
 });
