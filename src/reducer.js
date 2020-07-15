@@ -1,9 +1,20 @@
 import {extend} from './utils.js';
+import {GameType} from './const.js';
 
 
 const initialState = {
   mistakes: 0,
   step: -1,
+};
+
+const isArtistAnswerCorrect = (question, userAnswer) => {
+  return userAnswer.artist === question.song.artist;
+};
+
+const isGenreAnswerCorrect = (question, userAnswer) => {
+  return userAnswer.every((it, i) => {
+    return it === (question.answers[i].genre === question.genre);
+  });
 };
 
 const ActionType = {
@@ -16,6 +27,24 @@ const ActionCreator = {
     type: ActionType.INCREMENT_STEP,
     payload: 1,
   }),
+
+  incrementMistake: (question, userAnswer) => {
+    let isAnswerCorrect = false;
+
+    switch (question.type) {
+      case GameType.ARTIST:
+        isAnswerCorrect = isArtistAnswerCorrect(question, userAnswer);
+        break;
+      case GameType.GENRE:
+        isAnswerCorrect = isGenreAnswerCorrect(question, userAnswer);
+        break;
+    }
+
+    return {
+      type: ActionType.INCREMENT_MISTAKES,
+      payload: isAnswerCorrect ? 0 : 1,
+    };
+  }
 };
 
 const reducer = (state = initialState, action) => {
