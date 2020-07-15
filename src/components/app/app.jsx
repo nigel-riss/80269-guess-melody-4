@@ -1,6 +1,8 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {ActionCreator} from '../../reducer.js';
 import WelcomeScreen from '../welcome-screen/welcome-screen.jsx';
 import GameScreen from '../game-screen/game-screen.jsx';
 import ArtistQuestionScreen from '../artist-question-screen/artist-question-screen.jsx';
@@ -50,8 +52,10 @@ class App extends PureComponent {
   }
 
   _renderGameScreen() {
-    const {errorCount, questions} = this.props;
-    const {step} = this.state;
+    const {
+
+    } = this.props;
+
     const question = questions[step];
 
     if (step === -1 || step >= questions.length) {
