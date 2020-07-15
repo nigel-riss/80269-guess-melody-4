@@ -15,15 +15,54 @@ const ArtistQuestionScreenWrapped = withAudioPlayer(ArtistQuestionScreen);
 
 
 class App extends PureComponent {
-  constructor(props) {
-    super(props);
+  _renderGameScreen() {
+    const {
+      errorsCount,
+      questions,
+      onUserAnswer,
+      onWelcomeButtonClick,
+      step,
+    } = this.props;
 
-    this.state = {
-      step: -1,
-    };
+    const question = questions[step];
 
-    this._handleWelcomeButtonClick = this._handleWelcomeButtonClick.bind(this);
+    if (step === -1 || step >= questions.length) {
+      return <WelcomeScreen
+        errorCount={errorsCount}
+        onWelcomeButtonClick={onWelcomeButtonClick}
+      />;
+    }
+
+    if (question) {
+      switch (question.type) {
+        case GameType.ARTIST:
+          return (
+            <GameScreen
+              type={question.type}
+            >
+              <ArtistQuestionScreenWrapped
+                question={question}
+                onAnswer={onUserAnswer}
+              />
+            </GameScreen>
+          );
+        case GameType.GENRE:
+          return (
+            <GameScreen
+              type={question.type}
+            >
+              <GenreQuestionScreenWrapped
+                question={question}
+                onAnswer={onUserAnswer}
+              />
+            </GameScreen>
+          );
+      }
+    }
+
+    return null;
   }
+
 
   render() {
     const {questions} = this.props;
@@ -50,71 +89,31 @@ class App extends PureComponent {
       </BrowserRouter>
     );
   }
-
-  _renderGameScreen() {
-    const {
-
-    } = this.props;
-
-    const question = questions[step];
-
-    if (step === -1 || step >= questions.length) {
-      return <WelcomeScreen
-        errorCount={errorCount}
-        onWelcomeButtonClick={this._handleWelcomeButtonClick}
-      />;
-    }
-
-    if (question) {
-      switch (question.type) {
-        case GameType.ARTIST:
-          return (
-            <GameScreen
-              type={question.type}
-            >
-              <ArtistQuestionScreenWrapped
-                question={question}
-                onAnswer={() => {
-                  this.setState((prevState) => ({
-                    step: prevState.step + 1,
-                  }));
-                }}
-              />
-            </GameScreen>
-          );
-        case GameType.GENRE:
-          return (
-            <GameScreen
-              type={question.type}
-            >
-              <GenreQuestionScreenWrapped
-                question={question}
-                onAnswer={() => {
-                  this.setState((prevState) => ({
-                    step: prevState.step + 1,
-                  }));
-                }}
-              />
-            </GameScreen>
-          );
-      }
-    }
-
-    return null;
-  }
-
-  _handleWelcomeButtonClick() {
-    this.setState({
-      step: 0,
-    });
-  }
 }
 
 
 App.propTypes = {
-  errorCount: PropTypes.number.isRequired,
+  errorsCount: PropTypes.number.isRequired,
   questions: PropTypes.array.isRequired,
+  onUserAnswer: PropTypes.func.isRequired,
+  onWelcomeButtonClick: PropTypes.func.isRequired,
+  step: PropTypes.number.isRequired,
 };
 
 
-export default App;
+const mapStateToProps = (state) => ({
+  step: state.step,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onWelcomeButtonClick() {
+    dispatch(ActionCreator.incrementStep());
+  },
+  onUserAnswer() {
+    dispatch(ActionCreator.incrementStep());
+  },
+});
+
+
+export {App};
+export default connect(mapStateToProps, mapDispatchToProps)(App);
