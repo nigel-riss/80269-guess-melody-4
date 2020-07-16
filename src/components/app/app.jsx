@@ -1,6 +1,8 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {ActionCreator} from '../../reducer.js';
 import WelcomeScreen from '../welcome-screen/welcome-screen.jsx';
 import GameScreen from '../game-screen/game-screen.jsx';
 import ArtistQuestionScreen from '../artist-question-screen/artist-question-screen.jsx';
@@ -13,15 +15,54 @@ const ArtistQuestionScreenWrapped = withAudioPlayer(ArtistQuestionScreen);
 
 
 class App extends PureComponent {
-  constructor(props) {
-    super(props);
+  _renderGameScreen() {
+    const {
+      maxMistakes,
+      questions,
+      onUserAnswer,
+      onWelcomeButtonClick,
+      step,
+    } = this.props;
 
-    this.state = {
-      step: -1,
-    };
+    const question = questions[step];
 
-    this._handleWelcomeButtonClick = this._handleWelcomeButtonClick.bind(this);
+    if (step === -1 || step >= questions.length) {
+      return <WelcomeScreen
+        errorCount={maxMistakes}
+        onWelcomeButtonClick={onWelcomeButtonClick}
+      />;
+    }
+
+    if (question) {
+      switch (question.type) {
+        case GameType.ARTIST:
+          return (
+            <GameScreen
+              type={question.type}
+            >
+              <ArtistQuestionScreenWrapped
+                question={question}
+                onAnswer={onUserAnswer}
+              />
+            </GameScreen>
+          );
+        case GameType.GENRE:
+          return (
+            <GameScreen
+              type={question.type}
+            >
+              <GenreQuestionScreenWrapped
+                question={question}
+                onAnswer={onUserAnswer}
+              />
+            </GameScreen>
+          );
+      }
+    }
+
+    return null;
   }
+
 
   render() {
     const {questions} = this.props;
@@ -48,69 +89,34 @@ class App extends PureComponent {
       </BrowserRouter>
     );
   }
-
-  _renderGameScreen() {
-    const {errorCount, questions} = this.props;
-    const {step} = this.state;
-    const question = questions[step];
-
-    if (step === -1 || step >= questions.length) {
-      return <WelcomeScreen
-        errorCount={errorCount}
-        onWelcomeButtonClick={this._handleWelcomeButtonClick}
-      />;
-    }
-
-    if (question) {
-      switch (question.type) {
-        case GameType.ARTIST:
-          return (
-            <GameScreen
-              type={question.type}
-            >
-              <ArtistQuestionScreenWrapped
-                question={question}
-                onAnswer={() => {
-                  this.setState((prevState) => ({
-                    step: prevState.step + 1,
-                  }));
-                }}
-              />
-            </GameScreen>
-          );
-        case GameType.GENRE:
-          return (
-            <GameScreen
-              type={question.type}
-            >
-              <GenreQuestionScreenWrapped
-                question={question}
-                onAnswer={() => {
-                  this.setState((prevState) => ({
-                    step: prevState.step + 1,
-                  }));
-                }}
-              />
-            </GameScreen>
-          );
-      }
-    }
-
-    return null;
-  }
-
-  _handleWelcomeButtonClick() {
-    this.setState({
-      step: 0,
-    });
-  }
 }
 
 
 App.propTypes = {
-  errorCount: PropTypes.number.isRequired,
+  maxMistakes: PropTypes.number.isRequired,
   questions: PropTypes.array.isRequired,
+  onUserAnswer: PropTypes.func.isRequired,
+  onWelcomeButtonClick: PropTypes.func.isRequired,
+  step: PropTypes.number.isRequired,
 };
 
 
-export default App;
+const mapStateToProps = (state) => ({
+  step: state.step,
+  maxMistakes: state.maxMistakes,
+  questions: state.questions,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onWelcomeButtonClick() {
+    dispatch(ActionCreator.incrementStep());
+  },
+  onUserAnswer(question, answer) {
+    dispatch(ActionCreator.incrementMistake(question, answer));
+    dispatch(ActionCreator.incrementStep());
+  },
+});
+
+
+export {App};
+export default connect(mapStateToProps, mapDispatchToProps)(App);
