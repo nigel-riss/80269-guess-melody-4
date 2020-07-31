@@ -39,4 +39,4 @@ it(`withAudio is rendered correctly`, () => {
     .toJSON();
 
   expect(tree).toMatchSnapshot();
-})
+});
