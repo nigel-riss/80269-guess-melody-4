@@ -2,8 +2,8 @@ import {extend} from '../utils.js';
 
 
 const AuthorizationStatus = {
-  NO_AUTH: `NO_AUTH`,
   AUTH: `AUTH`,
+  NO_AUTH: `NO_AUTH`,
 };
 
 const initialState = {
@@ -34,5 +34,32 @@ const reducer = (state = initialState, action) => {
   return state;
 };
 
+const Operation = {
+  checkAuth: () => (dispatch, getState, api) => {
+    return api.post(`/login`)
+      .then(() => {
+        dispatch(ActionCreator.requireAuthorization(AuthorizationStatus.AUTH));
+      })
+      .catch((err) => {
+        throw err;
+      });
+  },
 
-export {reducer, ActionType, ActionCreator};
+  login: (authData) => (dispatch, getState, api) => {
+    return api.post(`/login`, {
+      email: authData.login,
+      password: authData.password,
+    }).then(() => {
+      dispatch(ActionCreator.requireAuthorization(AuthorizationStatus.AUTH));
+    });
+  },
+};
+
+
+export {
+  reducer,
+  ActionType,
+  ActionCreator,
+  AuthorizationStatus,
+  Operation,
+};
